@@ -1,0 +1,40 @@
+{
+  "name": "r.get-chrome-extension",
+  "description": "r.get, r.setToken, moment, lodash 제공, swagger-ui.html에서 자동 권한처리",
+  "version": "1.0.4",
+  "browser_action": {
+    "default_popup": "hello.html",
+    "default_icon": "hello.png"
+  },
+  "permissions": [
+    "<all_urls>"
+  ],
+  "manifest_version": 2,
+  "commands": {
+    "_execute_browser_action": {
+      "description": "Opens hello.html"
+    }
+  },
+  "web_accessible_resources": ["lib/lodash.js","lib/moment.min.js","lib/myCall.js", "lib/swagger-auto-authorize.js"],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://localhost/*"
+      ],
+      "js": [
+        "index.js"
+      ]
+    },
+    {
+      "matches": [
+        "*://192.168.200.233/swagger-ui.html",
+        "*://221.141.145.13/swagger-ui.html"
+      ],
+      "run_at": "document_end",
+      "js": [
+        "lib/jquery-3.5.0.min.js",
+        "inject-auth.js"
+      ]
+    }
+  ]
+}
