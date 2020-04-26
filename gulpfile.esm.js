@@ -1,6 +1,7 @@
-import { src, dest, series, task } from 'gulp'
+import { src, dest, series, task, watch } from 'gulp'
 import babel from 'gulp-babel'
 import stripDebug from 'gulp-strip-debug'
+import gulpIf from 'gulp-if'
 import uglify from 'gulp-uglify'
 import rename from 'gulp-rename'
 import { exec } from 'child_process'
@@ -14,20 +15,10 @@ import notifier from 'node-notifier'
 
  */
 
-const buildEndMessage = cb => {
-    notifier.notify({
-        title: 'Gulp Message',
-        message: '빌드 끝~!~!~!~!!~',
-        sound: true,
-    });
-    cb()
-}
-const buildAfter = cb => {
-    task(buildEndMessage)
-    cb()
-}
+const outputDir = 'dist/'
+
 const clean = (cb) => {
-    rimraf('output/', cb)
+    rimraf(outputDir, cb)
     // exec(`rimraf output/`)
 }
 const webpackBuild = (cb) => {
@@ -35,29 +26,41 @@ const webpackBuild = (cb) => {
     cb()
 }
 
-const babelBuild = (cb) => {
-    src('src/chrome/*')
-        .pipe(babel({
+const babelBuild = () => {
+    const fileCheck = file => {
+        return file.path.indexOf('jquery') === -1
+    }
+    return src('src/chrome/**/*.js')
+        .pipe(gulpIf(fileCheck, babel({
             presets: ['@babel/preset-env']
-        }))
+        })))
+        .pipe(dest(outputDir))
         // .pipe(src('*.js'))
-        .pipe(stripDebug())
-        .pipe(uglify())
-        .pipe(dest('output/'))
-        // .pipe(rename({ extname: '.min.js' }))
+        // .pipe(stripDebug())
+        .pipe(gulpIf(fileCheck, uglify()))
+        .pipe(gulpIf(fileCheck, rename({ extname: '.min.js' })))
+        .pipe(dest(outputDir))
         // .pipe(dest('output/'))
 
-    cb()
+}
+
+const copy = () => {
+    return src('src/chrome/*')
+        .pipe(dest(outputDir))
 }
 
 
-const bundle = series(clean, babelBuild)
+const bundle = series(clean, copy, babelBuild)
+
+const watchBundle = () => {
+    watch('src/chrome/**/*.js', bundle)
+}
 
 export {
     clean,
     webpackBuild,
     bundle,
-    buildEndMessage,
+    watchBundle,
 }
 
-export default series(clean, webpackBuild, bundle, buildAfter)
+export default series(clean, webpackBuild, copy, babelBuild)

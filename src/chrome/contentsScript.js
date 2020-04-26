@@ -8,9 +8,7 @@ var loadScript = function(scriptUrl) {
     (document.head || document.documentElement).appendChild(s);
 }
 
-loadScript('lib/lodash.js')
-loadScript('lib/moment.min.js')
-loadScript('lib/myCall.js')
+loadScript('lib/atk.min.js')
 // if (location.href.indexOf('192.168.200.233/swagger-ui.html')>-1) {
 //     loadScript("lib/swagger-auto-authorize.js")
 // }
