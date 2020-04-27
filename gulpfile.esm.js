@@ -1,13 +1,11 @@
-import { src, dest, series, task, watch } from 'gulp'
+import { dest, series, src, watch, parallel } from 'gulp'
 import babel from 'gulp-babel'
-import stripDebug from 'gulp-strip-debug'
 import gulpIf from 'gulp-if'
 import uglify from 'gulp-uglify'
 import rename from 'gulp-rename'
 import { exec } from 'child_process'
 import rimraf from 'rimraf'
-import notifier from 'node-notifier'
-
+import webpackStream from 'webpack-stream'
 
 /*
     clean -> webpack -> bundle
@@ -21,46 +19,47 @@ const clean = (cb) => {
     rimraf(outputDir, cb)
     // exec(`rimraf output/`)
 }
-const webpackBuild = (cb) => {
+const reactBuild = (cb) => {
     exec(`yarn build`)
     cb()
 }
 
-const babelBuild = () => {
-    const fileCheck = file => {
-        return file.path.indexOf('jquery') === -1
-    }
-    return src('src/chrome/**/*.js')
-        .pipe(gulpIf(fileCheck, babel({
-            presets: ['@babel/preset-env']
-        })))
+const fileCheck = (file) => file.path.indexOf('jquery') === -1
+
+const atkBuild = () =>
+    src('src/chrome/lib/atk.js')
+        .pipe(
+            webpackStream({
+                config: require('./webpack.config.chrome'),
+            }),
+        )
         .pipe(dest(outputDir))
-        // .pipe(src('*.js'))
-        // .pipe(stripDebug())
-        .pipe(gulpIf(fileCheck, uglify()))
-        .pipe(gulpIf(fileCheck, rename({ extname: '.min.js' })))
+
+const contentsScriptBuild = () =>
+    src('src/chrome/contentsScript.js')
+        .pipe(
+            babel(),
+        )
         .pipe(dest(outputDir))
-        // .pipe(dest('output/'))
-
-}
-
-const copy = () => {
-    return src('src/chrome/*')
+        .pipe(uglify())
+        .pipe(rename({ extname: '.min.js' }))
         .pipe(dest(outputDir))
-}
+
+const copy = () =>
+    src('src/chrome/**/*').pipe(
+        gulpIf((file) => {
+            return file.path.indexOf('atk') === -1
+        }, dest(outputDir)),
+    )
 
 
-const bundle = series(clean, copy, babelBuild)
+// const bundle = series(clean, copy)
+const bundle = series(clean, parallel(copy, atkBuild, contentsScriptBuild))
 
 const watchBundle = () => {
     watch('src/chrome/**/*.js', bundle)
 }
 
-export {
-    clean,
-    webpackBuild,
-    bundle,
-    watchBundle,
-}
+export { clean, reactBuild, bundle, watchBundle }
 
-export default series(clean, webpackBuild, copy, babelBuild)
+export default series(clean, reactBuild, bundle)

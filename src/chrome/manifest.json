@@ -23,7 +23,6 @@
       ],
       "run_at": "document_end",
       "js": [
-        "lib/jquery-3.5.0.min.js",
         "contentsScript.min.js"
       ]
     }

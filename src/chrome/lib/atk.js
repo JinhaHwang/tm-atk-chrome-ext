@@ -1,3 +1,5 @@
+import $ from 'jquery'
+console.info($)
 const loc = location.href
 
 const PAYMENT_TYPE = {
