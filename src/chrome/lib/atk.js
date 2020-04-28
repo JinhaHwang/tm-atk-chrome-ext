@@ -73,7 +73,7 @@ const atk = (config, payment) => {
                     let body = await res.text();
                     let match = body.match(/'initialData',\sJSON.parse\('(.+)'\)/);
                     if (match && match.length === 2) {
-                        const parseResult = JSON.parse(match[1]);
+                        const parseResult = JSON.parse(match[1].replace(/\\/gm, ''));
                         parseResult.classificationInfo.data.dealList.map(val => {
                             // if (val.dispNm.match(goodsName)) {
                             if (val.dispNm.toLowerCase().indexOf(keyword.toLowerCase()) > -1) {
@@ -86,6 +86,9 @@ const atk = (config, payment) => {
                         });
 
                     }
+                }).catch(e => {
+                    console.error(e)
+                    moveStop()
                 })
             }
         } catch (err) {
@@ -107,20 +110,30 @@ const atk = (config, payment) => {
         }
     }
 
+    const moveToPayPage = () => {
+        // todo : 이부분 확인 해야 됨~!
+        // 첫번째 옵션 선택
+        $('#_itemSelbox > div > div > div.op_conts > ul > li:nth-child(1) > a').click()
+        // 구매 클릭
+        $('#_infoDescription > div.info_product.wrap_button > div.button_box > a').click()
+    }
+
     return {
         delay,
         getServerTime,
         delayScheduleTime,
         moveToProductPage,
+        moveToPayPage,
         moveStop,
     }
 }
 
 
 const configParam = {
-    promotionUrl: 'https://front.wemakeprice.com/promotion/3693',
-    scheduleTime: new Date('2020-04-26 14:14:30'),
-    keyword: '닌텐도',
+    promotionUrl: 'https://front.wemakeprice.com/promotion/3591',
+    scheduleTime: new Date('2020-04-28 16:28:00'),
+    keyword: '실바니안',
+
 }
 
 const paymentParam = {
@@ -129,11 +142,14 @@ const paymentParam = {
 
 const tmatk = atk(configParam, paymentParam)
 
+if (loc.indexOf('front.wemakeprice.com/deal') > -1) {
+    tmatk.moveToPayPage()
+}
 if (loc.indexOf('front.wemakeprice.com/promotion') > -1) {
     tmatk.moveToProductPage()
-    const timeoutSecond = 1 * 1000
-    setTimeout(() => {
-        tmatk.moveStop()
-    }, timeoutSecond)
+    // const timeoutSecond = 3 * 1000
+    // setTimeout(() => {
+    //     tmatk.moveStop()
+    // }, timeoutSecond)
 }
 
