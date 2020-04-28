@@ -25,8 +25,8 @@
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "gulp": "cross-env NODE_ENV=production gulp",
-    "gulp:bundle": "yarn gulp bundle && npx -p node-notifier-cli notify -t 'Gulp Message' -m 'Bundle End!!' -s",
-    "gulp:watch": "yarn gulp watchBundle && npx -p node-notifier-cli notify -t 'Gulp Message' -m 'Watch it!!' -s"
+    "gulp:bundle": "yarn gulp bundle && npx node-notifier-cli notify -t 'Gulp Message' -m 'Bundle End!!' -s",
+    "gulp:watch": "yarn gulp watchBundle && npx node-notifier-cli notify -t 'Gulp Message' -m 'Watch it!!' -s"
   },
   "eslintConfig": {
     "rules": {
@@ -52,14 +52,10 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+      "last 1 chrome version"
     ],
     "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
+      "last 1 chrome version"
     ]
   },
   "devDependencies": {

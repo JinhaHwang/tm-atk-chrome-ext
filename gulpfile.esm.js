@@ -48,10 +48,9 @@ const contentsScriptBuild = () =>
 const copy = () =>
     src('src/chrome/**/*').pipe(
         gulpIf((file) => {
-            return file.path.indexOf('atk') === -1
+            return file.path.indexOf('atk.js') === -1
         }, dest(outputDir)),
     )
-
 
 // const bundle = series(clean, copy)
 const bundle = series(clean, parallel(copy, atkBuild, contentsScriptBuild))
