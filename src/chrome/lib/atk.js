@@ -110,12 +110,16 @@ const atk = (config, payment) => {
         }
     }
 
-    const moveToPayPage = () => {
+    const moveToPayPage = async () => {
         // todo : 이부분 확인 해야 됨~!
         // 첫번째 옵션 선택
-        $('#_itemSelbox > div > div > div.op_conts > ul > li:nth-child(1) > a').click()
+        $('#_itemSelbox > div > div > div.op_conts > ul > li:nth-child(1) > a')[0].click()
+        while(!$('#_optionSelectList > li').length) {
+            await delay(50)
+        }
         // 구매 클릭
-        $('#_infoDescription > div.info_product.wrap_button > div.button_box > a').click()
+        $('#_infoDescription > div.info_product.wrap_button > div.button_box > a')[0].click()
+
     }
 
     return {
@@ -142,14 +146,17 @@ const paymentParam = {
 
 const tmatk = atk(configParam, paymentParam)
 
-if (loc.indexOf('front.wemakeprice.com/deal') > -1) {
-    tmatk.moveToPayPage()
-}
 if (loc.indexOf('front.wemakeprice.com/promotion') > -1) {
     tmatk.moveToProductPage()
     // const timeoutSecond = 3 * 1000
     // setTimeout(() => {
     //     tmatk.moveStop()
     // }, timeoutSecond)
+} else if (
+    loc.indexOf('front.wemakeprice.com/deal') > -1 ||
+    loc.indexOf('front.wemakeprice.com/adeal') > -1 ||
+    loc.indexOf('front.wemakeprice.com/product') > -1
+) {
+    console.log('moveToPayPage')
+    tmatk.moveToPayPage()
 }
-
