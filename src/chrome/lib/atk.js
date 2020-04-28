@@ -1,5 +1,5 @@
 import $ from 'jquery'
-console.info($)
+
 const loc = location.href
 
 const PAYMENT_TYPE = {
@@ -111,7 +111,6 @@ const atk = (config, payment) => {
     }
 
     const moveToPayPage = async () => {
-        // todo : 이부분 확인 해야 됨~!
         // 첫번째 옵션 선택
         $('#_itemSelbox > div > div > div.op_conts > ul > li:nth-child(1) > a')[0].click()
         while(!$('#_optionSelectList > li').length) {
@@ -122,12 +121,17 @@ const atk = (config, payment) => {
 
     }
 
+    const moveToPay = async () => {
+        // todo : 매크로 만들거면 간편결제 페이코 ㄱ  아니면.. 신한카드
+    }
+
     return {
         delay,
         getServerTime,
         delayScheduleTime,
         moveToProductPage,
         moveToPayPage,
+        moveToPay,
         moveStop,
     }
 }
@@ -135,9 +139,8 @@ const atk = (config, payment) => {
 
 const configParam = {
     promotionUrl: 'https://front.wemakeprice.com/promotion/3591',
-    scheduleTime: new Date('2020-04-28 16:28:00'),
+    scheduleTime: new Date('2020-04-28 18:35:00'),
     keyword: '실바니안',
-
 }
 
 const paymentParam = {
@@ -159,4 +162,6 @@ if (loc.indexOf('front.wemakeprice.com/promotion') > -1) {
 ) {
     console.log('moveToPayPage')
     tmatk.moveToPayPage()
+} else if (loc.indexOf('escrow.wemakeprice.com/order') > -1) {
+    tmatk.moveToPay()
 }
