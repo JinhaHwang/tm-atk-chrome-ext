@@ -131,7 +131,6 @@ const atk = (config, personalConfig) => {
 
     const moveToPayPage = async () => {
         try {
-            console.log('타나?')
             if (location.pathname.indexOf('adeal') > -1) {
                 while(!$('#dealOnecutOption .option-select-box').length) {
                     await delay(50);
@@ -148,8 +147,6 @@ const atk = (config, personalConfig) => {
 
                 $('a.btn_buy')[0] && $('a.btn_buy')[0].click();
             } else {
-                const { useYn } = GV.get('initialData').detail
-                console.log(useYn)
                 if (GV.get('initialData').prodSimpleList === undefined &&
                     GV.get('initialData').option &&
                     GV.get('initialData').option.sel) {
@@ -173,7 +170,6 @@ const atk = (config, personalConfig) => {
                             $(el).find('a')[0].click()
                         })
                     } else {
-                        console.log('여기?2')
                         // 첫번째 옵션 선택
                         $('#_itemSelbox .item_option a:eq(0)').length && $('#_itemSelbox .item_option a')[0].click()
                         while(!$('#_optionSelectList > li').length) {
@@ -252,6 +248,7 @@ const configParam = {
     promotionUrl: 'https://front.wemakeprice.com/promotion/3591',
     scheduleTime: new Date('2020-04-29 02:40:00'),
     keyword: '실바니안',
+    // option: ['블랙', 100, 'L'],
 
     // Optional Parameters
     // 타임아웃 초
@@ -259,6 +256,7 @@ const configParam = {
 }
 
 const personalConfig = {
+    // todo : PAYCO 또는 SHINHAN_CARD 만 현재 가능 (PAYMENT_TYPE.PAYCO, PAYMENT_TYPE.SHINHAN_CARD)
     paymentType: PAYMENT_TYPE.PAYCO,
 
     // Optional Parameters
@@ -276,7 +274,6 @@ if (loc.indexOf('front.wemakeprice.com/promotion') > -1) {
     loc.indexOf('front.wemakeprice.com/adeal') > -1 ||
     loc.indexOf('front.wemakeprice.com/product') > -1
 ) {
-    console.log('시작하는건가?')
     tmatk.moveToPayPage()
 } else if (loc.indexOf('escrow.wemakeprice.com') > -1) {
     tmatk.moveToPay()

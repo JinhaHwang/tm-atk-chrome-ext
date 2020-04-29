@@ -61,4 +61,4 @@ const watchBundle = () => {
 
 export { clean, reactBuild, bundle, watchBundle }
 
-export default series(clean, reactBuild, bundle)
+export default bundle
