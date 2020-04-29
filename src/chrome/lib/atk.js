@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-globals */
+/* global GV */
 import $ from 'jquery'
 import axios from 'axios'
 
@@ -130,6 +132,13 @@ const atk = (config, personalConfig) => {
     }
 
     const moveToPayPage = async () => {
+        const { optionPriority } = config
+        const includedOptionIndex = $options => {
+            let arr = [];
+            $options.each((i, el) => arr.push($(el).text()))
+            const foundedIndex = arr.findIndex(s => optionPriority.find(o => s.indexOf(o) > -1))
+            return foundedIndex > -1 ? foundedIndex : 0
+        }
         try {
             if (location.pathname.indexOf('adeal') > -1) {
                 while(!$('#dealOnecutOption .option-select-box').length) {
@@ -147,36 +156,45 @@ const atk = (config, personalConfig) => {
 
                 $('a.btn_buy')[0] && $('a.btn_buy')[0].click();
             } else {
-                if (GV.get('initialData').prodSimpleList === undefined &&
-                    GV.get('initialData').option &&
-                    GV.get('initialData').option.sel) {
+                const { prodSimpleList, option } = GV.get('initialData')
+                if (prodSimpleList === undefined && option && option.sel) {
                     // 첫번째 옵션 선택
                     $('#_optionSelbox .ui_option_list').each((i, el) => {
-                        $(el).find('a')[0].click()
+                        // let arr = [];
+                        // $(el).find('.opt_text').each((i, el) => arr.push($(el).text()))
+                        // const foundedIndex = arr.findIndex(s => optionPriority.find(o => s.indexOf(o) > -1))
+                        // const selectIndex = foundedIndex > -1 ? foundedIndex : 0
+                        const selectIndex = includedOptionIndex($(el).find('.opt_text'))
+                        $(el).find('a')[selectIndex].click()
                     })
 
                     // 결제페이지로 이동
                     $('a.buy')[0] && $('a.buy')[0].click()
-                } else if (GV.get('initialData').prodSimpleList === undefined) {
+                } else if (prodSimpleList === undefined) {
                     $('a.buy')[0] && $('a.buy')[0].click()
-                } else if (GV.get('initialData').prodSimpleList && GV.get('initialData').prodSimpleList.length) {
-                    if (GV.get('initialData').prodSimpleList[0].optTextList && GV.get('initialData').prodSimpleList[0].optTextList.length) {
+                } else if (prodSimpleList && prodSimpleList.length) {
+                    const foundedIndex = prodSimpleList.map(p => p.prodNm).findIndex(s => optionPriority.find(o => s.indexOf(o) > -1))
+                    const selectIndex = foundedIndex > -1 ? foundedIndex : 0
+
+                    if (prodSimpleList[0].optTextList && prodSimpleList[0].optTextList.length) {
                         console.log('여기?1')
-                        $('#_itemSelbox .item_option a:eq(0)').length && $('#_itemSelbox .item_option a')[0].click()
+                        $('#_itemSelbox .item_option a:eq(selectIndex)').length && $('#_itemSelbox .item_option a')[selectIndex].click()
                         while(!$('#_optionSelbox > div > div > div.op_conts').length) {
                             await delay(50)
                         }
                         $('#_optionSelbox > div > div > div.op_conts > dl > dd').each((i, el) => {
-                            $(el).find('a')[0].click()
+                            const selectIndex = includedOptionIndex($(el).find('.opt_text'))
+                            $(el).find('a')[selectIndex].click()
                         })
                     } else {
                         // 첫번째 옵션 선택
-                        $('#_itemSelbox .item_option a:eq(0)').length && $('#_itemSelbox .item_option a')[0].click()
+                        $('#_itemSelbox .item_option a:eq(selectIndex)').length && $('#_itemSelbox .item_option a')[selectIndex].click()
                         while(!$('#_optionSelectList > li').length) {
                             await delay(50)
                         }
                         $('#_optionSelbox .ui_option_list').each((i, el) => {
-                            $(el).find('a')[0].click()
+                            const selectIndex = includedOptionIndex($(el).find('.opt_text'))
+                            $(el).find('a')[selectIndex].click()
                         })
                     }
 
@@ -248,7 +266,7 @@ const configParam = {
     promotionUrl: 'https://front.wemakeprice.com/promotion/3591',
     scheduleTime: new Date('2020-04-29 02:40:00'),
     keyword: '실바니안',
-    // option: ['블랙', 100, 'L'],
+    optionPriority: ['블랙', 'BLK', 'BLACK', 100, 'L', '트로이'],
 
     // Optional Parameters
     // 타임아웃 초
@@ -275,6 +293,6 @@ if (loc.indexOf('front.wemakeprice.com/promotion') > -1) {
     loc.indexOf('front.wemakeprice.com/product') > -1
 ) {
     tmatk.moveToPayPage()
-} else if (loc.indexOf('escrow.wemakeprice.com') > -1) {
+} else if (loc.indexOf('escrow.wemakeprice.com/order') > -1) {
     tmatk.moveToPay()
 }
