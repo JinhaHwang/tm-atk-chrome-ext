@@ -178,7 +178,7 @@ const atk = (config, personalConfig) => {
 
                     if (prodSimpleList[0].optTextList && prodSimpleList[0].optTextList.length) {
                         console.log('여기?1')
-                        $('#_itemSelbox .item_option a:eq(selectIndex)').length && $('#_itemSelbox .item_option a')[selectIndex].click()
+                        $(`#_itemSelbox .item_option a:eq(${selectIndex})`).length && $('#_itemSelbox .item_option a')[selectIndex].click()
                         while(!$('#_optionSelbox > div > div > div.op_conts').length) {
                             await delay(50)
                         }
@@ -188,7 +188,7 @@ const atk = (config, personalConfig) => {
                         })
                     } else {
                         // 첫번째 옵션 선택
-                        $('#_itemSelbox .item_option a:eq(selectIndex)').length && $('#_itemSelbox .item_option a')[selectIndex].click()
+                        $(`#_itemSelbox .item_option a:eq(${selectIndex})`).length && $('#_itemSelbox .item_option a')[selectIndex].click()
                         while(!$('#_optionSelectList > li').length) {
                             await delay(50)
                         }
@@ -263,9 +263,10 @@ const atk = (config, personalConfig) => {
 
 
 const configParam = {
-    promotionUrl: 'https://front.wemakeprice.com/promotion/3591',
+    // todo : 프로모션 페이지 url 변경 필요
+    promotionUrl: 'https://front.wemakeprice.com/promotion/group/all_wmpday',
     scheduleTime: new Date('2020-04-29 02:40:00'),
-    keyword: '실바니안',
+    keyword: '금장',
     optionPriority: ['블랙', 'BLK', 'BLACK', 100, 'L', '트로이'],
 
     // Optional Parameters
