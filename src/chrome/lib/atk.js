@@ -71,7 +71,11 @@ const atk = (config, personalConfig) => {
     }
 
     const moveToProductPage = async () => {
-        const { keyword, promotionUrl, scheduleTime, timeoutSecond } = config
+        const { keyword, promotionUrl, scheduleTime, timeoutSecond, price } = config
+
+        const keywordFilter = item => item.dispNm.toLowerCase().indexOf(keyword.toLowerCase()) > -1
+        const priceFilter = item => item.salePrice === price || item.discountPrice === price
+
         try {
             await delayScheduleTime(scheduleTime);
 
@@ -88,17 +92,15 @@ const atk = (config, personalConfig) => {
                     let match = body.match(/'initialData',\sJSON.parse\('(.+)'\)/);
                     if (match && match.length === 2) {
                         const parseResult = JSON.parse(match[1].replace(/\\/gm, ''));
-                        parseResult.classificationInfo.data.dealList.map(val => {
-                            // if (val.dispNm.match(goodsName)) {
-                            if (val.dispNm.toLowerCase().indexOf(keyword.toLowerCase()) > -1) {
-                                // if (val.dispNm.match(goodsName) && val.saleStatus !== 'S') {
+                        const { dealList } = parseResult.classificationInfo.data
+                        dealList.filter(keywordFilter)
+                            .filter(priceFilter)
+                            .forEach(val => {
                                 goodsInfo = {
                                     linkInfo: val.linkInfo,
                                     linkType: val.linkType
                                 }
-                            }
-                        });
-
+                            })
                     }
                 }).catch(e => {
                     console.error(e)
@@ -265,13 +267,16 @@ const atk = (config, personalConfig) => {
 const configParam = {
     // todo : 프로모션 페이지 url 변경 필요
     promotionUrl: 'https://front.wemakeprice.com/promotion/group/all_wmpday',
-    scheduleTime: new Date('2020-04-29 02:40:00'),
-    keyword: '금장',
-    optionPriority: ['블랙', 'BLK', 'BLACK', 100, 'L', '트로이'],
+    scheduleTime: new Date('2020-05-01 18:00:00'),
+    // keyword: '케이블',
+    // price: 1900,
+    keyword: '아이폰',
+    price: 186930,
+    optionPriority: ['화이트','white','WHITE','흰색','블랙', 'BLK', 'BLACK', 100, 'L', '트로이'],
 
     // Optional Parameters
     // 타임아웃 초
-    timeoutSecond: 3,
+    timeoutSecond: 10,
 }
 
 const personalConfig = {
