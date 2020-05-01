@@ -135,6 +135,7 @@ const atk = (config, personalConfig) => {
 
     const moveToPayPage = async () => {
         const { optionPriority } = config
+        const { email } = personalConfig
         const includedOptionIndex = $options => {
             let arr = [];
             $options.each((i, el) => arr.push($(el).text()))
@@ -198,8 +199,12 @@ const atk = (config, personalConfig) => {
                             const selectIndex = includedOptionIndex($(el).find('.opt_text'))
                             $(el).find('a')[selectIndex].click()
                         })
-                    }
 
+                    }
+                    if ($('#_optionTxtArea a[data-option-btn=infoEnter]').length) {
+                        $('#_optionTxtArea input[data-option=textOption]').val(email)
+                        $('#_optionTxtArea a[data-option-btn=infoEnter]')[0].click()
+                    }
                     // 결제페이지로 이동
                     $('a.buy')[0] && $('a.buy')[0].click()
                 }
@@ -212,8 +217,18 @@ const atk = (config, personalConfig) => {
 
     const moveToPay = async () => {
         // todo : 매크로 만들거면 간편결제 페이코 ㄱ  아니면.. 신한카드
-        const { paymentType } = personalConfig
+        const { paymentType, deliveryRequest } = personalConfig
+        // 통관입력
         $('#personalOverseaNo').val('P160020983918')
+
+        // 배송시 요청사항
+        $(`#selectShipMsg > li a[data-shipmsg="직접 입력"]`)[0].click()
+        $('#directShipMsg').trigger('focus')
+        $('#directShipMsg').val(deliveryRequest)
+        $('#directShipMsg').trigger('keyup')
+        $('#directShipMsg').trigger('blur')
+        // await delay(100)
+
         // 해외통관 동의
         $('#isPersonalOverseaNoChk')[0] && $('#isPersonalOverseaNoChk')[0].click()
 
@@ -285,7 +300,12 @@ const personalConfig = {
 
     // Optional Parameters
     // 통관 고유 번호
-    personalOverseaNo: 'P160020983918'
+    personalOverseaNo: 'P160020983918',
+
+    email: 'gojinha@naver.com',
+
+    // 배송시 요청사항
+    deliveryRequest: '문 앞에 놔주세요'
 }
 
 const tmatk = atk(configParam, personalConfig)
