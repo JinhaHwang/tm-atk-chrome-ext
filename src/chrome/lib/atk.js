@@ -73,7 +73,12 @@ const atk = (config, personalConfig) => {
     const moveToProductPage = async () => {
         const { keyword, promotionUrl, scheduleTime, timeoutSecond, price } = config
 
-        const keywordFilter = item => item.dispNm.toLowerCase().indexOf(keyword.toLowerCase()) > -1
+        const keywordFilter = item => {
+            const keywords = keyword.split(',')
+            return keywords.some(k => {
+                return item.dispNm.toLowerCase().indexOf(k.toLowerCase()) > -1
+            })
+        }
         const priceFilter = item => item.salePrice === price || item.discountPrice === price
 
         try {
@@ -134,7 +139,7 @@ const atk = (config, personalConfig) => {
     }
 
     const moveToPayPage = async () => {
-        const { optionPriority } = config
+        const { optionPriority, isCouponGet } = config
         const { email } = personalConfig
         const includedOptionIndex = $options => {
             let arr = [];
@@ -142,6 +147,16 @@ const atk = (config, personalConfig) => {
             const foundedIndex = arr.findIndex(s => optionPriority.find(o => s.indexOf(o) > -1))
             return foundedIndex > -1 ? foundedIndex : 0
         }
+
+        // 쿠폰 받을거면 아래 코드
+        if (isCouponGet && $('#_infoAreaCoupon > a').length) {
+            $('#_infoAreaCoupon > a')[0].click()
+            while(!$('#_infoAreaCoupon > div > div > a.btns_sys.redline_sml_s').length) {
+                await delay(50)
+            }
+            $('#_infoAreaCoupon > div > div > a.btns_sys.redline_sml_s')[0].click()
+        }
+
         try {
             if (location.pathname.indexOf('adeal') > -1) {
                 while(!$('#dealOnecutOption .option-select-box').length) {
@@ -217,6 +232,7 @@ const atk = (config, personalConfig) => {
 
     const moveToPay = async () => {
         // todo : 매크로 만들거면 간편결제 페이코 ㄱ  아니면.. 신한카드
+        const { isCouponGet } = config
         const { paymentType, deliveryRequest } = personalConfig
         // 통관입력
         $('#personalOverseaNo').val('P160020983918')
@@ -232,6 +248,9 @@ const atk = (config, personalConfig) => {
         // 해외통관 동의
         $('#isPersonalOverseaNoChk')[0] && $('#isPersonalOverseaNoChk')[0].click()
 
+        if (isCouponGet) {
+            if ($('input[name="cartDirect"]').length) $('input[name="cartDirect"]')[0].click()
+        }
         switch (paymentType) {
             case PAYMENT_TYPE.SHINHAN_CARD:
                 $('#CARD a')[0] && $('#CARD a')[0].click()
@@ -282,16 +301,18 @@ const atk = (config, personalConfig) => {
 const configParam = {
     // todo : 프로모션 페이지 url 변경 필요
     promotionUrl: 'https://front.wemakeprice.com/promotion/group/all_wmpday',
-    scheduleTime: new Date('2020-05-01 18:00:00'),
+    scheduleTime: new Date('2020-05-01 22:00:00'),
     // keyword: '케이블',
     // price: 1900,
-    keyword: '아이폰',
-    price: 186930,
-    optionPriority: ['화이트','white','WHITE','흰색','블랙', 'BLK', 'BLACK', 100, 'L', '트로이'],
+    keyword: '닥터키친,닥터 키친,밥솥',
+    price: 119900,
+    optionPriority: ['라이언','white','WHITE','흰색','블랙', 'BLK', 'BLACK', 100, 'L', '트로이'],
 
     // Optional Parameters
     // 타임아웃 초
-    timeoutSecond: 10,
+    timeoutSecond: 3,
+    // 쿠폰 받을거면 아래 true, 안받을거면 false
+    isCouponGet: true,
 }
 
 const personalConfig = {
