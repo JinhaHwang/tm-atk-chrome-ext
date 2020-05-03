@@ -50,4 +50,4 @@ if (loc.indexOf('front.wemakeprice.com/promotion') > -1) {
     wmpatk.moveToPay()
 }
 
-// 테스트 주석2
+// 테스트 주석3
