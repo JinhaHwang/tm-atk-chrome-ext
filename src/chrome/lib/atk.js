@@ -49,3 +49,5 @@ if (loc.indexOf('front.wemakeprice.com/promotion') > -1) {
 } else if (loc.indexOf('escrow.wemakeprice.com/order') > -1) {
     wmpatk.moveToPay()
 }
+
+// 테스트 주석
