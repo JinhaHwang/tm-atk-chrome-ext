@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-globals */
+/* global chrome */
 var loadScript = function(scriptUrl) {
     var s = document.createElement('script');
 // add "myCall.js" to web_accessible_resources in manifest.json
@@ -8,7 +10,11 @@ var loadScript = function(scriptUrl) {
     (document.head || document.documentElement).appendChild(s);
 }
 
-loadScript('lib/atk.min.js')
+if (location.href.indexOf('wemakeprice.com') > -1) {
+    loadScript('lib/atkWmp.min.js')
+} else {
+    loadScript('lib/atkTm.min.js')
+}
 // if (location.href.indexOf('192.168.200.233/swagger-ui.html')>-1) {
 //     loadScript("lib/swagger-auto-authorize.js")
 // }

@@ -11,7 +11,7 @@ import {PAYMENT_TYPE} from "./constants";
 
 const cancelTokenSource = CancelToken.source()
 
-const atk = (config, personalConfig) => {
+const wmp = (config, personalConfig) => {
 
     let goodsInfo = null;
     const moveStop = () => {
@@ -254,4 +254,4 @@ const atk = (config, personalConfig) => {
     }
 }
 
-export default atk
+export default wmp

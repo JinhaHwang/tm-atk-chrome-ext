@@ -1,10 +1,12 @@
-import { dest, series, src, watch, parallel } from 'gulp'
+import { dest, series, src, watch, parallel, task } from 'gulp'
 import babel from 'gulp-babel'
 import gulpIf from 'gulp-if'
 import uglify from 'gulp-uglify'
 import rename from 'gulp-rename'
 import { exec } from 'child_process'
 import rimraf from 'rimraf'
+import named from "vinyl-named";
+
 import webpackStream from 'webpack-stream'
 
 /*
@@ -27,10 +29,24 @@ const reactBuild = (cb) => {
 const fileCheck = (file) => file.path.indexOf('jquery') === -1
 
 const atkBuild = () =>
-    src('src/chrome/lib/atk.js')
+    src(['src/chrome/lib/atkWmp.js', 'src/chrome/lib/atkTm.js'])
+        .pipe(named())
         .pipe(
             webpackStream({
-                config: require('./webpack.config.chrome'),
+                // config: webpackConfigChrome,
+                mode: 'production',
+                module: {
+                    rules: [
+                        {
+                            test: /\.js$/,
+                            exclude: /node_modules/,
+                            loader: "babel-loader" // 바벨 로더를 추가한다
+                        }
+                    ]
+                },
+                output: {
+                    filename: 'lib/[name].min.js'
+                },
             }),
         )
         .pipe(dest(outputDir))

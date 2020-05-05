@@ -1,11 +1,11 @@
 /* eslint-disable no-restricted-globals */
-import atkWmp from "./modules/atk-wmp";
+import wmp from "./modules/wmp";
 import {PAYMENT_TYPE} from "./modules/constants";
 
 const configParam = {
     // todo : 프로모션 페이지 url 변경 필요
-    promotionUrl: 'https://front.wemakeprice.com/promotion/group/all_wmpday',
-    scheduleTime: new Date('2020-05-02 22:00:00'),
+    promotionUrl: 'https://front.wemakeprice.com/special/category/5001222',
+    scheduleTime: new Date('2020-05-05 10:00:00'),
     // keyword: '케이블',
     // price: 1900,
     keyword: '닥터키친,닥터 키친,밥솥',
@@ -33,7 +33,7 @@ const personalConfig = {
     deliveryRequest: '문 앞에 놔주세요'
 }
 
-const wmpatk = atkWmp(configParam, personalConfig)
+const wmpatk = wmp(configParam, personalConfig)
 
 const loc = location.href
 
