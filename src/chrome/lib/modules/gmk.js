@@ -11,7 +11,7 @@ import {PAYMENT_TYPE} from "./constants";
 
 const cancelTokenSource = CancelToken.source()
 
-const tm = (config, personalConfig) => {
+const gmk = (config, personalConfig) => {
 
     let goodsInfo = null;
     const moveStop = () => {
@@ -19,6 +19,10 @@ const tm = (config, personalConfig) => {
     }
 
     const moveToProductPage = async () => {
+
+    }
+
+    const moveToEventProductPagee = async () => {
         const { keyword, adoptKeyword, scheduleTime, timeoutSecond, price } = config
 
         const keywordFilter = ({ searchDealResponse: { dealInfo } }) => {
@@ -41,19 +45,21 @@ const tm = (config, personalConfig) => {
 
             while (!goodsInfo) {
                 await delay(50);
-                axios.get(`http://search.tmon.co.kr/api/search/v4/deals?_=${+new Date()}&keyword=${encodeURIComponent(keyword)}&thr=ts&mainDealOnly=true&page=1&useTypoCorrection=true&sortType=POPULAR`, {
+
+                axios.get(location.href, {
                     cancelToken: cancelTokenSource.token
                 }).then(async (res) => {
+
                     let body = res.data;
-                    const { searchDeals } = body.data;
-                    searchDeals.filter(keywordFilter)
-                        .filter(priceFilter)
-                        .forEach((item) => {
-                            const { extraDealInfo } = item
-                            goodsInfo = {
-                                linkInfo: extraDealInfo.detailUrl,
-                            }
-                        })
+                    // const href = $('#comp_6702070 > div > div > div.sliderwrap > ul > li:nth-child(5) > div > div > div > div > div > div.btnbx > a').attr('href')
+                    const href = $(body).find('#comp_6702072 a.btn_buy').attr('href')
+
+                    if (href) {
+                        goodsInfo = {
+                            linkInfo: href,
+                        }
+                    }
+
                 }).catch(e => {
                     console.error(e)
                     if (axios.isCancel(e)) {
@@ -72,7 +78,8 @@ const tm = (config, personalConfig) => {
         }
 
         if (goodsInfo.linkInfo) {
-            location.href = goodsInfo.linkInfo
+            window.open(goodsInfo.linkInfo)
+            // location.href = goodsInfo.linkInfo
         }
     }
 
@@ -80,45 +87,26 @@ const tm = (config, personalConfig) => {
 
     const moveToPayPage = async () => {
         const { optionPriority } = config
-        const includedOptionIndex = options => {
-            const foundedIndex = options.findIndex(option => optionPriority.find(op => option.title.indexOf(op) > -1))
+        const includedOptionIndex = $options => {
+            let arr = [];
+            $options.each((i, el) => arr.push($(el).text()))
+            const foundedIndex = arr.findIndex(s => optionPriority.find(o => s.indexOf(o) > -1))
             return foundedIndex > -1 ? foundedIndex : 0
-        }
-        const includedOptionItem = options => options.find(option => optionPriority.find(op => option.title.indexOf(op) > -1))
-
-        const optionsSelect = (options, index) => {
-            const selectIndex = includedOptionIndex(options)
-            const selectItem = includedOptionItem(options)
-            $(`#_optionScroll > div > div > div > div.dep-sel.dep${index} > ul:eq(0) li:nth-child(${selectIndex}) button`).click()
-            if (selectItem && selectItem.childNodes && selectItem.childNodes.length) {
-                optionsSelect(selectItem.childNodes, index + 1)
-            }
         }
 
         try {
 
-            const {optionTree} = TMON.oApp.htStorage
-            const { childNodes } = optionTree.data.treeData
-
-            if (childNodes.length === 1) {
-                // 옵션이 하나면 바로 선택되기 때문에 옵션선택 필요 없음
-            } else {
-                // 옵션 선택
-                // const selectIndex = includedOptionIndex(childNodes)
-                // const selectItem = includedOptionItem(childNodes)
-
-                optionsSelect(childNodes, 0)
-                // $('#_optionScroll > div > div > div > div > ul.purchase_selector > li:nth-child(1) > button')[index].click()
-                // $('#_optionScroll > div > div > div > div.dep-sel.dep1 > ul:eq(0) li:nth-child(1) button').click()
-            }
+            $('.item-topinfo div.select-item>div.item_options ul').each((i, el) => {
+                const selectIndex = includedOptionIndex($(el).find('a'))
+                $(el).find('a')[selectIndex].click()
+            })
 
             // 선택된 옵션이 있는지 확인
-            while(!$('#_optionScroll > div > ul.prod:eq(0) > li').length) {
+            while(!$('ul.selected-list:eq(0) li').length) {
                 await delay(50)
             }
-            console.log('옵션 선택 확인 됨~')
             // 바록 구매 클릭
-            $('button[data-type="buyNow"]:eq(0)')[0].click()
+            $('#coreInsOrderBtn')[0].click()
 
         } catch (e) {
             console.error(e)
@@ -130,6 +118,7 @@ const tm = (config, personalConfig) => {
     }
 
     const moveToPay = async () => {
+        $('a.im_btn.submit').length > 0 && $('a.im_btn.submit')[0].click()
     }
 
     return {
@@ -137,6 +126,7 @@ const tm = (config, personalConfig) => {
         getServerTime,
         delayScheduleTime,
         moveToProductPage,
+        moveToEventProductPagee,
         moveToPayPage,
         // todo
         moveToPay,
@@ -144,4 +134,4 @@ const tm = (config, personalConfig) => {
     }
 }
 
-export default tm
+export default gmk

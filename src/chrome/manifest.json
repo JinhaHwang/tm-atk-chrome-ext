@@ -15,19 +15,12 @@
       "description": "Opens hello.html"
     }
   },
-  "web_accessible_resources": ["lib/atkWmp.min.js", "lib/atkTm.min.js"],
+  "web_accessible_resources": ["lib/atkWmp.min.js", "lib/atkTm.min.js", "lib/atkGmk.min.js"],
   "content_scripts": [
     {
       "matches": [
-        "*://*.wemakeprice.com/*"
-      ],
-      "run_at": "document_end",
-      "js": [
-        "contentsScript.min.js"
-      ]
-    },
-    {
-      "matches": [
+        "*://*.wemakeprice.com/*",
+        "*://*.gmarket.co.kr/*",
         "*://*.tmon.co.kr/*"
       ],
       "run_at": "document_end",

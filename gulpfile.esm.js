@@ -29,7 +29,7 @@ const reactBuild = (cb) => {
 const fileCheck = (file) => file.path.indexOf('jquery') === -1
 
 const atkBuild = () =>
-    src(['src/chrome/lib/atkWmp.js', 'src/chrome/lib/atkTm.js'])
+    src(['src/chrome/lib/atkWmp.js', 'src/chrome/lib/atkTm.js', 'src/chrome/lib/atkGmk.js'])
         .pipe(named())
         .pipe(
             webpackStream({

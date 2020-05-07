@@ -12,6 +12,8 @@ var loadScript = function(scriptUrl) {
 
 if (location.href.indexOf('wemakeprice.com') > -1) {
     loadScript('lib/atkWmp.min.js')
+} else if (location.href.indexOf('gmarket.co.kr')) {
+    loadScript('lib/atkGmk.min.js')
 } else {
     loadScript('lib/atkTm.min.js')
 }
