@@ -76,7 +76,7 @@
     "gulp-uglify": "^3.0.2",
     "husky": "^4.2.5",
     "lint-staged": "^10.1.7",
-    "node-notifier": "^7.0.0",
+    "node-notifier": "^8.0.1",
     "node-notifier-cli": "^1.2.1",
     "prettier": "^2.0.5",
     "react-app-rewired": "^2.1.5",
